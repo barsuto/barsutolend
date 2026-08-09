@@ -39,7 +39,7 @@
   var ticking = false;
   var pointer = { x: null, y: null };
 
-  function applyGlass(el, clientX, clientY) {
+  function applyGlass(el, clientX, clientY, applyTilt) {
     var rect = el.getBoundingClientRect();
     var px = ((clientX - rect.left) / rect.width) * 100;
     var py = ((clientY - rect.top) / rect.height) * 100;
@@ -48,7 +48,10 @@
     el.style.setProperty("--mx", px + "%");
     el.style.setProperty("--my", py + "%");
 
-    if (el.hasAttribute("data-glass-tilt")) {
+    /* skip the 3D rotate on continuous input (device tilt): a transform
+       that never settles trips a Safari bug where the blurred glass-shine
+       leaks past its rounded-corner clip as a square ghost. */
+    if (applyTilt !== false && el.hasAttribute("data-glass-tilt")) {
       var rx = ((py - 50) / 50) * -6; // rotateX
       var ry = ((px - 50) / 50) * 6;  // rotateY
       el.style.setProperty("--rx", rx.toFixed(2) + "deg");
@@ -56,7 +59,7 @@
     }
   }
 
-  function frame() {
+  function frame(applyTilt) {
     ticking = false;
     if (pointer.x === null) return;
     glassEls.forEach(function (el) {
@@ -66,7 +69,7 @@
         pointer.x < rect.right + 60 &&
         pointer.y > rect.top - 60 &&
         pointer.y < rect.bottom + 60;
-      if (near) applyGlass(el, pointer.x, pointer.y);
+      if (near) applyGlass(el, pointer.x, pointer.y, applyTilt);
     });
   }
 
@@ -106,7 +109,9 @@
 
     if (!ticking) {
       ticking = true;
-      requestAnimationFrame(frame);
+      requestAnimationFrame(function () {
+        frame(false);
+      });
     }
   }
 
