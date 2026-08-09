@@ -136,7 +136,7 @@
     } else {
       modalLink.href = "#";
       modalLink.setAttribute("aria-disabled", "true");
-      modalText.textContent = "Посилання на Telegram-канал скоро з'явиться тут — слідкуй за Instagram, поки що напиши в директ.";
+      modalText.textContent = "Посилання на Telegram-канал скоро з'явиться тут, слідкуй за Instagram, поки що напиши в директ.";
     }
 
     modal.hidden = false;
@@ -200,7 +200,7 @@
       .then(function (list) {
         var found = list.indexOf(nick) !== -1;
         if (found) {
-          setResult("is-ok", "✅ Доступ підтверджено — @" + nick + " є в базі клієнтів.");
+          setResult("is-ok", "✅ Доступ підтверджено: @" + nick + " є в базі клієнтів.");
           openModal(nick);
         } else {
           setResult(
