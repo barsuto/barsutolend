@@ -91,6 +91,49 @@
     });
   });
 
+  /* ---------- device-tilt glass shimmer (rotate the phone to move the shine) ---------- */
+  var tiltBaseline = null;
+
+  function onDeviceOrientation(e) {
+    if (e.beta === null || e.gamma === null) return;
+    if (!tiltBaseline) tiltBaseline = { beta: e.beta, gamma: e.gamma };
+
+    var dGamma = Math.max(-45, Math.min(45, e.gamma - tiltBaseline.gamma));
+    var dBeta = Math.max(-45, Math.min(45, e.beta - tiltBaseline.beta));
+
+    pointer.x = window.innerWidth / 2 + (dGamma / 45) * (window.innerWidth / 2);
+    pointer.y = window.innerHeight / 2 + (dBeta / 45) * (window.innerHeight / 2);
+
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(frame);
+    }
+  }
+
+  function enableDeviceTilt() {
+    window.addEventListener("deviceorientation", onDeviceOrientation);
+  }
+
+  if (window.DeviceOrientationEvent) {
+    if (typeof DeviceOrientationEvent.requestPermission === "function") {
+      /* iOS 13+ needs a user gesture before it will grant motion access */
+      document.addEventListener(
+        "touchend",
+        function requestTiltPermission() {
+          document.removeEventListener("touchend", requestTiltPermission);
+          DeviceOrientationEvent.requestPermission()
+            .then(function (state) {
+              if (state === "granted") enableDeviceTilt();
+            })
+            .catch(function () {});
+        },
+        { once: true }
+      );
+    } else {
+      enableDeviceTilt();
+    }
+  }
+
   /* ---------- 5) portfolio: lazy-load + play-on-view video ---------- */
   var lazyVideoEls = Array.prototype.slice.call(document.querySelectorAll(".lazy-video"));
   if ("IntersectionObserver" in window && lazyVideoEls.length) {
