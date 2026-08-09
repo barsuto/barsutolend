@@ -114,21 +114,24 @@
     window.addEventListener("deviceorientation", onDeviceOrientation);
   }
 
+  var tiltBtn = document.getElementById("tilt-enable");
+
   if (window.DeviceOrientationEvent) {
     if (typeof DeviceOrientationEvent.requestPermission === "function") {
-      /* iOS 13+ needs a user gesture before it will grant motion access */
-      document.addEventListener(
-        "touchend",
-        function requestTiltPermission() {
-          document.removeEventListener("touchend", requestTiltPermission);
+      /* iOS: motion access can only be granted from a direct tap on a real control */
+      if (tiltBtn) {
+        tiltBtn.hidden = false;
+        tiltBtn.addEventListener("click", function () {
           DeviceOrientationEvent.requestPermission()
             .then(function (state) {
               if (state === "granted") enableDeviceTilt();
             })
-            .catch(function () {});
-        },
-        { once: true }
-      );
+            .catch(function () {})
+            .then(function () {
+              tiltBtn.hidden = true;
+            });
+        });
+      }
     } else {
       enableDeviceTilt();
     }

@@ -309,6 +309,13 @@ img{display:block; max-width:100%;}
   --glass-blur:10px; --glass-bg:rgba(13,18,16,0.35); --glass-bg-strong:rgba(13,18,16,0.5);
   --glass-border:rgba(255,255,255,0.25);
 }
+.tilt-enable{
+  position:absolute; top:14px; right:14px; z-index:2;
+  font-size:11px; letter-spacing:0.05em; cursor:pointer;
+  color:#F4F4F2; padding:8px 14px; border-radius:999px; border:none;
+  --glass-blur:10px; --glass-bg:rgba(13,18,16,0.35); --glass-bg-strong:rgba(13,18,16,0.5);
+  --glass-border:rgba(255,255,255,0.25);
+}
 
 /* ---------- ticker ---------- */
 .ticker{
